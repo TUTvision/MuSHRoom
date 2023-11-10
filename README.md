@@ -1,7 +1,7 @@
 # MuSHRoom: Multi-Sensor Hybrid Room Dataset for Joint 3D Reconstruction and Novel View Synthesis
  [Xuqian Ren](https://xuqianren.github.io/), [Wenjia Wang](https://wenjiawang0312.github.io/), [Dingding Cai](https://dingdingcai.github.io/), Tuuli Tuominen, [Juho Kannala](https://users.aalto.fi/~kannalj1/), [Esa Rahtu](https://esa.rahtu.fi/) 
 
-[Project Page](https://xuqianren.github.io/publications/MuSHRoom/)  [Paper](https://arxiv.org/pdf/2311.02778.pdf)  
+[Project Page](https://xuqianren.github.io/publications/MuSHRoom/) | [Paper](https://arxiv.org/pdf/2311.02778.pdf)  
 
 Metaverse technologies demand accurate, real-time, and immersive modeling on consumer-grade hardware for both non-human perception (e.g., drone/robot/autonomous car navigation) and immersive technologies like AR/VR, requiring both structural accuracy and photorealism. However, there exists a knowledge gap in how to apply geometric reconstruction and photorealism modeling (novel view synthesis) in a unified framework. 
 
