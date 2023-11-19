@@ -31,7 +31,7 @@ If you use this data, please cite the original paper presenting it:
 The data files are available for download on Zenodo:  [[Zenodo](https://zenodo.org/me/uploads?q=&l=list&p=1&s=10&sort=newest)] and can be downloaded on a per dataset basis from there. 
 
 Kinect Part 1-4 and iPhone Part 1-3 are the basic data.
-Mesh is the ground truth mesh.
+Mesh is the reference mesh.
 
 If you want to try our method proposed in the paper, you can also download the generated data from Kinect Part 5-6 and iPhone Part 4-5.
 
