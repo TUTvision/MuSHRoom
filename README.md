@@ -49,7 +49,7 @@ To maximize compatibility, all data is published in open and simple file formats
 		— depth_complte_train/ # completed depth used for testing within a single sequence
 		— intrinsic/ # intrinsic parameters
 		— PointCloud/ # spectacularAI point cloud of keyframe
-		— pose/	# spectacularAI pose of keyframe
+		— pose/	# spectacularAI pose of keyframe. These poses are aligned with the metric of depth.
 		— sdf_dataset_all/ # sdfstudio format dataset used for testing with a different sequence
 		— sdf_dataset_train/ # sdfstudio format dataset used for testing within a single sequence
 		— sdf_dataset_all_interp_3/ # sdfstudio format dataset used for our method
@@ -58,8 +58,8 @@ To maximize compatibility, all data is published in open and simple file formats
 		— camera_parameter.txt	# camera settings during capture
 		— test.txt # image id for testing within a single sequence
 		— transformations_colmap.json # global optimized colmap used for testing with a different sequence
-		— transformations_train.json	#	pose used for testing within a single sequence
-		— transformations.json	# raw pose 
+		— transformations_train.json	#	pose used for testing within a single sequence. Re-scaled pose.
+		— transformations.json	# Re-scaled pose from "pose" folder. 
 	| —— short_capture
 		— images/ # same with long capture
 		— depth/	# same with long capture
