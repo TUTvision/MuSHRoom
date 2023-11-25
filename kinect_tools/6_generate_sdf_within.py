@@ -42,8 +42,8 @@ depth_trans_totensor = transforms.Compose(
     ]
 )
 
-output_path = Path(args.output_path)  # "data/custom/scannet_scene0050_00"
-input_path = Path(args.input_path)  # "/home/yuzh/Projects/datasets/scannet/scene0050_00"
+output_path = Path(args.output_path)
+input_path = Path(args.input_path) 
 
 output_path.mkdir(parents=True, exist_ok=True)
 
@@ -69,13 +69,17 @@ for pose_path in pose_paths:
     poses.append(c2w)
 poses = np.array(poses)
 
+frame_names = [name.split(".")[0] for name in pose_paths]
+
 num_images = poses.shape[0]
 i_all = np.arange(num_images)
 
 with open(os.path.join(input_path, "test.txt")) as f:
     lines = f.readlines()
+i_eval_name = [num.split("\n")[0] for num in lines]
+i_eval = [frame_names.index(name) for name in i_eval_name]
 
-i_eval = [int(num.split("\n")[0]) for num in lines]
+
 i_train = np.setdiff1d(i_all, i_eval)
 
 

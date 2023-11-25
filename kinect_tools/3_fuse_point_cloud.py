@@ -40,7 +40,9 @@ if __name__ == "__main__":
     input_path = os.path.join(args.input, "PointCloud")
     print(args.input)
     # input_path = args.input
-    point_path = os.listdir(input_path)
+    point_path = list(sorted(os.listdir(input_path), key=lambda x: int(x.split(".")[0])))
+    frame_names = [num.split(".")[0] for num in point_path]
+
     num = len(point_path)
 
     points_list = []
@@ -50,10 +52,16 @@ if __name__ == "__main__":
     """
     read a line of numbers from test.txt
     """
+    i_all = np.arange(num)
+    
     if args.pose_scale == "train":
         with open(os.path.join(args.input, "test.txt")) as f:
             lines = f.readlines()
-        i_eval = [int(num.split("\n")[0]) for num in lines]
+        i_eval_name = [num.split("\n")[0] for num in lines]
+        i_eval = [frame_names.index(name) for name in i_eval_name]
+    
+    i_train = np.setdiff1d(i_all, i_eval)
+
     
     
     for i in range(num):
@@ -62,10 +70,7 @@ if __name__ == "__main__":
                 continue
         
         pcd = o3d.io.read_point_cloud(os.path.join(input_path, str(i) + ".ply"))
-        original_pose = np.loadtxt(os.path.join(args.input, "pose", str(i) + ".txt")).reshape(4, 4)
-        pcd = pcd.transform(original_pose)
 
-        # pcd = pcd.voxel_down_sample(voxel_size=0.01)
         points = pcd.points
         color = pcd.colors
         normal = pcd.normals

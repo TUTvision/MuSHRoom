@@ -1,5 +1,5 @@
 # MuSHRoom: Multi-Sensor Hybrid Room Dataset for Joint 3D Reconstruction and Novel View Synthesis
- [Xuqian Ren](https://xuqianren.github.io/) ,  [Wenjia Wang](https://wenjiawang0312.github.io/) ,  [Dingding Cai](https://dingdingcai.github.io/) , Tuuli Tuominen,  [Juho Kannala](https://users.aalto.fi/~kannalj1/) ，  [Esa Rahtu](https://esa.rahtu.fi/) 
+ [Xuqian Ren](https://xuqianren.github.io/) ,  [Wenjia Wang](https://wenjiawang0312.github.io/) ,  [Dingding Cai](https://dingdingcai.github.io/) , Tuuli Tuominen,  [Juho Kannala](https://users.aalto.fi/~kannalj1/), [Esa Rahtu](https://esa.rahtu.fi/) 
 
 [Project Page](https://xuqianren.github.io/publications/MuSHRoom/) | [Paper](https://arxiv.org/pdf/2311.02778.pdf)  
 
@@ -9,7 +9,10 @@ Metaverse technologies demand accurate, real-time, and immersive modeling on con
 To address this gap and promote the development of robust and immersive modeling and rendering with consumer-grade devices, first, we propose a real-world Multi-Sensor Hybrid Room Dataset (MuSHRoom). Our dataset presents exciting challenges and requires state-of-the-art methods to be cost-effective, robust to noisy data and devices, and can jointly learn 3D reconstruction and novel view synthesis, instead of treating them as separate tasks, making them ideal for real-world applications. Second, we benchmark several famous pipelines on our dataset for joint 3D mesh reconstruction and novel view synthesis. Finally, in order to further improve the overall performance, we propose a new method that achieves a good trade-off between the two tasks. Our dataset and benchmark show great potential in promoting the improvements for fusing 3D reconstruction and high-quality rendering in a robust and computationally efficient end-to-end fashion. The dataset will be made publicly available.
 
 ## Updates
-📣  Dataset and process scripts have been released [2023-11-19]
+* [x] 📣  iPhone Dataset and process scripts have been released [2023-11-19]
+* [ ]     Release Kinect Dataset.
+* [ ]     Release mesh evaluation script.
+* [ ]     Release our method. 
 
 ## Attribution
 If you use this data, please cite the original paper presenting it:
@@ -45,11 +48,11 @@ To maximize compatibility, all data is published in open and simple file formats
 	| —— long_capture
 		— images/ # extracted rgb images of keyframe
 		— depth/ # extracted depth images of keyframe
-  		— depth_complte_all/ # completed depth used for testing with a different sequence
-		— depth_complte_train/ # completed depth used for testing within a single sequence
+  		— depth_complte_all/ # completed depth used for testing with a different sequence, depth is completed by point cloud reconstructed from all frames.
+		— depth_complte_train/ # completed depth used for testing within a single sequence, depth is completed by point cloud reconstructed from training frames.
 		— intrinsic/ # intrinsic parameters
 		— PointCloud/ # spectacularAI point cloud of keyframe
-		— pose/	# spectacularAI pose of keyframe. These poses are aligned with the metric of depth.
+		— pose/	# spectacularAI pose of keyframe. These poses are aligned with the metric of depth. Poses are in the OPENCV coordination.
 		— sdf_dataset_all/ # sdfstudio format dataset used for testing with a different sequence
 		— sdf_dataset_train/ # sdfstudio format dataset used for testing within a single sequence
 		— sdf_dataset_all_interp_3/ # sdfstudio format dataset used for our method
@@ -58,8 +61,7 @@ To maximize compatibility, all data is published in open and simple file formats
 		— camera_parameter.txt	# camera settings during capture
 		— test.txt # image id for testing within a single sequence
 		— transformations_colmap.json # global optimized colmap used for testing with a different sequence
-		— transformations_train.json	#	pose used for testing within a single sequence. Re-scaled pose.
-		— transformations.json	# Re-scaled pose from "pose" folder. 
+		— transformations.json	# pose saved in the json file. Poses are in the OPENGL coordination.
 	| —— short_capture
 		— images/ # same with long capture
 		— depth/	# same with long capture
@@ -68,18 +70,17 @@ To maximize compatibility, all data is published in open and simple file formats
 		— calibration.json; data.jsonl; data.mkv; data2.mkv; vio_config.yaml	# raw videos and parameters from 
 		— meta_data_align.json	# aligned test pose used for testing with a different sequence
 		— transformations_colmap.json # same with long capture
-		— transformations.json	# raw pose 
+		— transformations.json	# same with long capture
 | —— iphone
 	| —— long_capture
 		— images/	# same with Kinect
 		— depth/	# same with Kinect
-		— polycam_mesh/		# mesh provided by polycam
+		— polycam_mesh/		# mesh provided by polycam, not aligned with the pose, just for visulization.
+		— polycam_pointcloud.ply	# point cloud provided by polycam, just for visulization.
 		— sdf_dataset_all/	# same with Kinect
 		— sdf_dataset_train/	# same with Kinect
 		— sdf_dataset_all_interp_4	# same with Kinect
 		— sdf_dataset_train_interp_4	# same with Kinect
-		— polycam_pointcloud.ply	# point cloud provided by polycam
-		— mesh_info.json	# transformation matrix used for polycam mesh
 		— test.txt	# same with Kinect
 		— transformations_colmap.json	# same with Kinect
 		— transformations.json	# same with Kinect
@@ -118,9 +119,9 @@ After capturing videos with Kinect, we first extract raw images, depth, pose, an
 python kinect_tools/1_process_rawvideo_perframe.py --input room_datasets/${room_name}/kinect/long_capture --output room_datasets/${room_name}/kinect/long_capture
 ```
 
-After selecting test frames, we rescale the whole sequences only according to the training frames
+Saving pose of each keyframe in the "pose" folder to a json file.
 ```
-python kinect_tools/2_rescale_train_transformation.py --input room_datasets/${room_name}/kinect/long_capture
+python kinect_tools/2_generate_train_transformations.py --input room_datasets/${room_name}/kinect/long_capture
 ```
 
 We fuse the point cloud of each keyframe of the whole sequences or of the training frames.

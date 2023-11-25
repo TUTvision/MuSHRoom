@@ -180,52 +180,52 @@ def onMappingOutput(output):
             posefilename = args.output + "/PointCloud/" + f'{index}' + ".ply"
             o3d.io.write_point_cloud(posefilename, pointCloud)
 
-            up += cameraToWorld[0:3,1]
-            frame = {
-                "file_path": "images/" + f'{index}' + ".png",
-                "sharpness": sharpness(newImgName),
-                "transform_matrix": cameraToWorld,
-                "depth_file_path": "depth/" + f'{index}' + ".png",
-            }
-            frames.append(frame)
+            # up += cameraToWorld[0:3,1]
+            # frame = {
+            #     "file_path": "images/" + f'{index}' + ".png",
+            #     "sharpness": sharpness(newImgName),
+            #     "transform_matrix": cameraToWorld,
+            #     "depth_file_path": "depth/" + f'{index}' + ".png",
+            # }
+            # frames.append(frame)
             index += 1
 
             
         
-        centerPos, scale = resizeToUnitCube(frames)
+        # centerPos, scale = resizeToUnitCube(frames)
 
-        for f in frames: f["transform_matrix"] = f["transform_matrix"].tolist()
+        # for f in frames: f["transform_matrix"] = f["transform_matrix"].tolist()
 
-        if frameWidth < 0 or frameHeight < 0: raise Exception("Unable get image dimensions, zero images received?")
+        # if frameWidth < 0 or frameHeight < 0: raise Exception("Unable get image dimensions, zero images received?")
 
-        fl_x = intrinsics[0][0]
-        fl_y = intrinsics[1][1]
-        cx = intrinsics[0][2]
-        cy = intrinsics[1][2]
-        angle_x = math.atan(frameWidth / (fl_x * 2)) * 2
-        angle_y = math.atan(frameHeight / (fl_y * 2)) * 2
+        # fl_x = intrinsics[0][0]
+        # fl_y = intrinsics[1][1]
+        # cx = intrinsics[0][2]
+        # cy = intrinsics[1][2]
+        # angle_x = math.atan(frameWidth / (fl_x * 2)) * 2
+        # angle_y = math.atan(frameHeight / (fl_y * 2)) * 2
 
-        transformationsJson = {
-            "center": centerPos.tolist(),
-            "scale": scale,
-            "camera_angle_x": angle_x,
-            "camera_angle_y": angle_y,
-            "fl_x": fl_x,
-            "fl_y": fl_y,
-            "k1": 0.0,
-            "k2": 0.0,
-            "p1": 0.0,
-            "p2": 0.0,
-            "cx": cx,
-            "cy": cy,
-            "w": frameWidth,
-            "h": frameHeight,
-            "aabb_scale": args.scale,
-            "frames": frames
-        }
+        # transformationsJson = {
+        #     "center": centerPos.tolist(),
+        #     "scale": scale,
+        #     "camera_angle_x": angle_x,
+        #     "camera_angle_y": angle_y,
+        #     "fl_x": fl_x,
+        #     "fl_y": fl_y,
+        #     "k1": 0.0,
+        #     "k2": 0.0,
+        #     "p1": 0.0,
+        #     "p2": 0.0,
+        #     "cx": cx,
+        #     "cy": cy,
+        #     "w": frameWidth,
+        #     "h": frameHeight,
+        #     "aabb_scale": args.scale,
+        #     "frames": frames
+        # }
 
-        with open(args.output + "/transformations.json", "w") as outFile:
-            json.dump(transformationsJson, outFile, indent=2)
+        # with open(args.output + "/transformations.json", "w") as outFile:
+        #     json.dump(transformationsJson, outFile, indent=2)
 
 
 def main():

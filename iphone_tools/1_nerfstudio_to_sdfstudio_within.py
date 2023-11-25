@@ -89,7 +89,7 @@ def main(args):
     poses = np.array(poses)
 
     min_vertices = poses[index][:, :3, 3].min(axis=0)
-    max_vertices = poses[index][:, :3, 3] .max(axis=0)
+    max_vertices = poses[index][:, :3, 3].max(axis=0)
 
     # === Normalize the scene ===
     if args.scene_type in ["indoor", "object"]:
