@@ -31,12 +31,17 @@ If you use this data, please cite the original paper presenting it:
 
 
 ## Downloading the data
-The data files are available for download on Zenodo:  [[Zenodo](https://zenodo.org/me/uploads?q=&l=list&p=1&s=10&sort=newest)] and can be downloaded on a per dataset basis from there. 
+The data files are available for download on Zenodo and can be downloaded on a per dataset basis from there. 
 
-Kinect Part 1-4 and iPhone Part 1-3 are the basic data.
-Mesh is the reference mesh.
+iPhone data that contains the "images", "depth", "poses" can be downloaded from:
+[Part1](https://zenodo.org/records/10154395),
+[Part2](https://zenodo.org/records/10155482),
+[Part3](https://zenodo.org/records/10155616)
 
-If you want to try our method proposed in the paper, you can also download the generated data from Kinect Part 5-6 and iPhone Part 4-5.
+
+[Mesh](https://zenodo.org/records/10156860) is the reference mesh.
+
+If you want to try our method proposed in the paper, you can also download the generated data from iPhone [Part4](https://zenodo.org/records/10154510) and iPhone [Part5](https://zenodo.org/records/10151161).
 
 
 ## Data structure
