@@ -9,10 +9,10 @@ Metaverse technologies demand accurate, real-time, and immersive modeling on con
 To address this gap and promote the development of robust and immersive modeling and rendering with consumer-grade devices, first, we propose a real-world Multi-Sensor Hybrid Room Dataset (MuSHRoom). Our dataset presents exciting challenges and requires state-of-the-art methods to be cost-effective, robust to noisy data and devices, and can jointly learn 3D reconstruction and novel view synthesis, instead of treating them as separate tasks, making them ideal for real-world applications. Second, we benchmark several famous pipelines on our dataset for joint 3D mesh reconstruction and novel view synthesis. Finally, in order to further improve the overall performance, we propose a new method that achieves a good trade-off between the two tasks. Our dataset and benchmark show great potential in promoting the improvements for fusing 3D reconstruction and high-quality rendering in a robust and computationally efficient end-to-end fashion. The dataset will be made publicly available.
 
 ## Updates
-* [x] 📣  iPhone Dataset and process scripts have been released [2023-11-19]
-* [ ]     Release Kinect Dataset.
+* [x] 📣  Dataset process scripts have been released [2023-11-19]
+* [ ]     Release Kinect and iPhone Dataset.
 * [x] 📣  Release mesh evaluation script [2023-11-26]
-* [x]     Release our method. [2023-11-26]
+* [x] 📣  Release our method. [2023-11-26]
 
 ## Attribution
 If you use this data, please cite the original paper presenting it:
@@ -33,7 +33,7 @@ If you use this data, please cite the original paper presenting it:
 ## Downloading the data
 The data files are available for download on Zenodo and can be downloaded on a per dataset basis from there. 
 
-iPhone data that contains the "images", "depth", "poses" can be downloaded from:
+<!-- iPhone data that contains the "images", "depth", "poses" can be downloaded from:
 [Part1](https://zenodo.org/records/10154395),
 [Part2](https://zenodo.org/records/10155482),
 [Part3](https://zenodo.org/records/10155616)
@@ -41,7 +41,7 @@ iPhone data that contains the "images", "depth", "poses" can be downloaded from:
 
 [Mesh](https://zenodo.org/records/10156860) is the reference mesh.
 
-If you want to try our method proposed in the paper, you can also download the generated data from iPhone [Part4](https://zenodo.org/records/10154510) and iPhone [Part5](https://zenodo.org/records/10151161).
+If you want to try our method proposed in the paper, you can also download the generated data from iPhone [Part4](https://zenodo.org/records/10154510) and iPhone [Part5](https://zenodo.org/records/10151161). -->
 
 
 ## Data structure
