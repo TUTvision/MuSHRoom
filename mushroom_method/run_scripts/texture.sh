@@ -1,2 +1,0 @@
-python scripts/texture.py --load-config outputs/server_fix/neus-facto/baseline_two_head_interp_3/config.yml \
---input-mesh-filename meshes/baseline_interp.ply --output-dir ./textures --target_num_faces 5000
