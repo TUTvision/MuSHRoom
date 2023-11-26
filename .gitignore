@@ -1,6 +1,6 @@
 colmap/*
 evaluate/*
-./go_surf/*
+go_surf/*
 interp_pose/*
 pointcloud/*
 rotate_iphone/*
