@@ -70,6 +70,7 @@ To maximize compatibility, all data is published in open and simple file formats
 		— depth/	# same with long capture
 		— PointCloud/	# same with long capture
 		— pose/	# same with long capture
+		— intrinsic/ # same with long capture
 		— calibration.json; data.jsonl; data.mkv; data2.mkv; vio_config.yaml	# raw videos and parameters from 
 		— meta_data_align.json	# aligned test pose used for testing with a different sequence
 		— transformations_colmap.json # same with long capture
@@ -115,6 +116,15 @@ To maximize compatibility, all data is published in open and simple file formats
 
 
 ## List of scripts for processing the data sets
+
+Enviroment installation.
+Install SpectacularAI by 
+```
+pip install spectacularai
+```
+Install radiance mapping by instruction in [RadianceMapping](https://github.com/seanywang0408/RadianceMapping).
+Install [Nerfstudio](https://github.com/nerfstudio-project/nerfstudio).
+
 ### kinect_tools
 
 After capturing videos with Kinect, we first extract raw images, depth, pose, and point cloud of each keyframe.
