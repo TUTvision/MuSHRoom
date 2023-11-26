@@ -11,7 +11,7 @@ To address this gap and promote the development of robust and immersive modeling
 ## Updates
 * [x] 📣  iPhone Dataset and process scripts have been released [2023-11-19]
 * [ ]     Release Kinect Dataset.
-* [ ]     Release mesh evaluation script.
+* [x] 📣  Release mesh evaluation script [2023-11-26]
 * [ ]     Release our method. 
 
 ## Attribution
@@ -53,12 +53,10 @@ To maximize compatibility, all data is published in open and simple file formats
 		— intrinsic/ # intrinsic parameters
 		— PointCloud/ # spectacularAI point cloud of keyframe
 		— pose/	# spectacularAI pose of keyframe. These poses are aligned with the metric of depth. Poses are in the OPENCV coordination.
-		— sdf_dataset_all/ # sdfstudio format dataset used for testing with a different sequence
-		— sdf_dataset_train/ # sdfstudio format dataset used for testing within a single sequence
 		— sdf_dataset_all_interp_3/ # sdfstudio format dataset used for our method
 		— sdf_dataset_train_interp_3/ # sdfstudio format dataset used for our method
 		— calibration.json; data.jsonl; data.mkv; data2.mkv; vio_config.yaml	# raw videos and parameters from spectacularAI SDK
-		— camera_parameter.txt	# camera settings during capture
+		— camera_parameters.txt	# camera settings during capture
 		— test.txt # image id for testing within a single sequence
 		— transformations_colmap.json # global optimized colmap used for testing with a different sequence
 		— transformations.json	# pose saved in the json file. Poses are in the OPENGL coordination.
@@ -77,8 +75,8 @@ To maximize compatibility, all data is published in open and simple file formats
 		— depth/	# same with Kinect
 		— polycam_mesh/		# mesh provided by polycam, not aligned with the pose, just for visulization.
 		— polycam_pointcloud.ply	# point cloud provided by polycam, just for visulization.
-		— sdf_dataset_all/	# same with Kinect
-		— sdf_dataset_train/	# same with Kinect
+		— sdf_dataset_all/	# sdfstudio format dataset used for testing with a different sequence
+		— sdf_dataset_train/	# sdfstudio format dataset used for testing within a single sequence
 		— sdf_dataset_all_interp_4	# same with Kinect
 		— sdf_dataset_train_interp_4	# same with Kinect
 		— test.txt	# same with Kinect
