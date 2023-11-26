@@ -171,6 +171,7 @@ room_datasets
 hard_case
 meshes/
 backup/
+run_scripts/
 # gradio_cached_examples/
 # # tensorboard log files
 # events.out.*
