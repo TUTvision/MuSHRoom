@@ -1,9 +1,9 @@
 colmap/*
 evaluate/*
-go_surf/*
+go_surf
 interp_pose/*
 pointcloud/*
 rotate_iphone/*
 volumetric_fusion/*
 scripts/*
-room_datasets/*
+room_datasets
