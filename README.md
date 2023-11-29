@@ -10,9 +10,10 @@ To address this gap and promote the development of robust and immersive modeling
 
 ## Updates
 * [x] 📣  Dataset process scripts have been released [2023-11-19]
-* [ ]     Release Kinect and iPhone Dataset.
+* [x] 📣  Release Kinect and iPhone Dataset. [2023-11-28]
 * [x] 📣  Release mesh evaluation script [2023-11-26]
 * [x] 📣  Release our method. [2023-11-26]
+* [ ]   Release mesh. 
 
 ## Attribution
 If you use this data, please cite the original paper presenting it:
