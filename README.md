@@ -13,7 +13,7 @@ To address this gap and promote the development of robust and immersive modeling
 * [x] 📣  Release Kinect and iPhone Dataset. [2023-11-28]
 * [x] 📣  Release mesh evaluation script [2023-11-26]
 * [x] 📣  Release our method. [2023-11-26]
-* [ ]   Release mesh. 
+* [x] 📣  Release mesh. [2023-11-29]
 
 ## Attribution
 If you use this data, please cite the original paper presenting it:
@@ -32,7 +32,8 @@ If you use this data, please cite the original paper presenting it:
 
 
 ## Downloading the data
-The data files are available for download on Zenodo and can be downloaded on a per dataset basis from there. 
+The data files are available for download on [Zenodo](https://zenodo.org/communities/mushroom?q=&l=list&p=1&s=10&sort=newest) and can be downloaded on a per dataset basis from there. 
+
 
 <!-- iPhone data that contains the "images", "depth", "poses" can be downloaded from:
 [Part1](https://zenodo.org/records/10154395),
@@ -54,8 +55,6 @@ To maximize compatibility, all data is published in open and simple file formats
 	| —— long_capture
 		— images/ # extracted rgb images of keyframe
 		— depth/ # extracted depth images of keyframe
-  		— depth_complte_all/ # completed depth used for testing with a different sequence, depth is completed by point cloud reconstructed from all frames.
-		— depth_complte_train/ # completed depth used for testing within a single sequence, depth is completed by point cloud reconstructed from training frames.
 		— intrinsic/ # intrinsic parameters
 		— PointCloud/ # spectacularAI point cloud of keyframe
 		— pose/	# spectacularAI pose of keyframe. These poses are aligned with the metric of depth. Poses are in the OPENCV coordination.
@@ -73,7 +72,6 @@ To maximize compatibility, all data is published in open and simple file formats
 		— pose/	# same with long capture
 		— intrinsic/ # same with long capture
 		— calibration.json; data.jsonl; data.mkv; data2.mkv; vio_config.yaml	# raw videos and parameters from 
-		— meta_data_align.json	# aligned test pose used for testing with a different sequence
 		— transformations_colmap.json # same with long capture
 		— transformations.json	# same with long capture
 | —— iphone
@@ -82,8 +80,6 @@ To maximize compatibility, all data is published in open and simple file formats
 		— depth/	# same with Kinect
 		— polycam_mesh/		# mesh provided by polycam, not aligned with the pose, just for visulization.
 		— polycam_pointcloud.ply	# point cloud provided by polycam, just for visulization.
-		— sdf_dataset_all/	# sdfstudio format dataset used for testing with a different sequence
-		— sdf_dataset_train/	# sdfstudio format dataset used for testing within a single sequence
 		— sdf_dataset_all_interp_4	# same with Kinect
 		— sdf_dataset_train_interp_4	# same with Kinect
 		— test.txt	# same with Kinect
@@ -92,10 +88,10 @@ To maximize compatibility, all data is published in open and simple file formats
 	| —— short_capture
 		— images/	# same with Kinect
 		— depth/	# same with Kinect
-		— meta_data_align.json	# same with Kinect
 		— transformations_colmap.json	# same with Kinect
 		— transformations.json	# same with Kinect
 —— gt_mesh.ply	# reference mesh used for geometry comparison
+—— gt_pd.ply	# reference point cloud used for geometry comparison
 —— icp_iphone.json	# aligned transformation matrix used for iPhone sequences
 —— icp_kinect.json	# aligned transformation matrix used for kinect sequences
 			

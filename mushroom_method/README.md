@@ -20,6 +20,7 @@ To get the result of our method evaluated by testing within a single sequence, p
 ```
 ./train_our_within_same.sh 
 ```
+If you want to directly use the data we generated for this method, please download from [iPhone Part1](https://zenodo.org/records/10151161), [iPhone Part 2](https://zenodo.org/records/10154510), [Kinect Part1](https://zenodo.org/records/10116322), [Kinect Part2](https://zenodo.org/records/10118384)
 
 To get the result of our method evaluated by testing with a different sequence, please train with
 ```

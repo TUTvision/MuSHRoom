@@ -349,8 +349,7 @@ class NerfactoModel(Model):
         img_tmp = (image[0, :, :, :]).permute(1, 2, 0).cpu().numpy() * 255
         img_tmp = cv2.cvtColor(img_tmp, cv2.COLOR_RGB2BGR)
         rgb_tmp = np.concatenate([rgb_tmp, img_tmp], axis=1)
-        os.makedirs("outputs/{}/nerfacto/baseline_kinect_1/render", exist_ok=True)
-        cv2.imwrite("outputs/{}/nerfacto/baseline_kinect_1/render/{}.png".format(self.config.file_name, n), rgb_tmp)
+        # cv2.imwrite("outputs/{}/nerfacto/baseline/render/{}.png".format(self.config.file_name, n), rgb_tmp)
 
         # mse = self.rgb_loss(image, rgb)
         psnr = self.psnr(image, rgb)
