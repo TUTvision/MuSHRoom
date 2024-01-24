@@ -1,7 +1,8 @@
+"""
+adapted from sdfstudio: https://github.com/autonomousvision/sdfstudio/blob/master/scripts/datasets/process_nerfstudio_to_sdfstudio.py
+"""
 import argparse
-import glob
 import json
-import os
 from pathlib import Path
 
 import cv2
@@ -11,7 +12,9 @@ import PIL
 from PIL import Image
 from torchvision import transforms
 
-parser = argparse.ArgumentParser(description="preprocess scannet dataset to sdfstudio dataset")
+parser = argparse.ArgumentParser(
+    description="preprocess scannet dataset to sdfstudio dataset"
+)
 
 parser.add_argument("--input_path", dest="input_path", help="path to scannet scene")
 parser.set_defaults(im_name="NONE")
@@ -42,8 +45,8 @@ depth_trans_totensor = transforms.Compose(
     ]
 )
 
-output_path = Path(args.output_path)  
-input_path = Path(args.input_path) 
+output_path = Path(args.output_path)
+input_path = Path(args.input_path)
 
 output_path.mkdir(parents=True, exist_ok=True)
 
@@ -53,25 +56,27 @@ poses = []
 color_paths = []
 depth_paths = []
 
-TRANSFORM_CAM = np.array([
-    [1,0,0,0],
-    [0,-1,0,0],
-    [0,0,-1,0],
-    [0,0,0,1],
-    ])
+TRANSFORM_CAM = np.array(
+    [
+        [1, 0, 0, 0],
+        [0, -1, 0, 0],
+        [0, 0, -1, 0],
+        [0, 0, 0, 1],
+    ]
+)
 
 for frame in json_file["frames"]:
     image_path = input_path / frame["file_path"]
     color_paths.append(image_path)
-    depth_path = (input_path / (frame["depth_file_path"]) )
+    depth_path = input_path / (frame["depth_file_path"])
 
     depth_path = str(depth_path).replace("depth", "depth_complete_all")
     depth_paths.append(depth_path)
-    
+
     c2w = np.array(frame["transform_matrix"])
-    c2w = np.matmul( c2w, TRANSFORM_CAM)
+    c2w = np.matmul(c2w, TRANSFORM_CAM)
     poses.append(c2w)
-    
+
 cx, cy, fx, fy = json_file["cx"], json_file["cy"], json_file["fl_x"], json_file["fl_y"]
 
 poses = np.array(poses)
@@ -103,17 +108,18 @@ K = np.array([[fx, 0, cx, 0], [0, fy, cy, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
 
 frames = []
 out_index = 0
-for idx, (pose, image_path, depth_path) in enumerate(zip(poses, color_paths, depth_paths)):
-
+for idx, (pose, image_path, depth_path) in enumerate(
+    zip(poses, color_paths, depth_paths)
+):
     target_image = output_path / f"{out_index:06d}_rgb.png"
-    
+
     img = Image.open(image_path)
     img_tensor = trans_totensor(img)
     img_tensor.save(target_image)
 
     # load depth
     target_depth_image = output_path / f"{out_index:06d}_sensor_depth.png"
-    
+
     depth = cv2.imread(depth_path, -1).astype(np.float32) / 1000.0
 
     depth_PIL = Image.fromarray(depth)

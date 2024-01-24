@@ -42,7 +42,7 @@ for name in name_list:
     metadata["frames"].append({
         "file_path" : os.path.join("images", name + ".png"),
         "transform_matrix" : np.matmul(np.loadtxt(os.path.join(pose_folder, name + ".txt")).reshape(4, 4), TRANSFORM_CAM).tolist(),
-        "depth_path" : os.path.join("depth", name + ".png"),
+        "depth_file_path" : os.path.join("depth", name + ".png"),
     })
 
 save_path = os.path.join(input_path, "transformations.json")

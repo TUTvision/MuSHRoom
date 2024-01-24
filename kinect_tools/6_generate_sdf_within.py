@@ -1,3 +1,6 @@
+"""
+adapted from sdfstudio: https://github.com/autonomousvision/sdfstudio/blob/master/scripts/datasets/process_nerfstudio_to_sdfstudio.py
+"""
 import argparse
 import glob
 import json
@@ -11,7 +14,9 @@ import PIL
 from PIL import Image
 from torchvision import transforms
 
-parser = argparse.ArgumentParser(description="preprocess scannet dataset to sdfstudio dataset")
+parser = argparse.ArgumentParser(
+    description="preprocess scannet dataset to sdfstudio dataset"
+)
 
 parser.add_argument("--input_path", dest="input_path", help="path to scannet scene")
 parser.set_defaults(im_name="NONE")
@@ -43,17 +48,23 @@ depth_trans_totensor = transforms.Compose(
 )
 
 output_path = Path(args.output_path)
-input_path = Path(args.input_path) 
+input_path = Path(args.input_path)
 
 output_path.mkdir(parents=True, exist_ok=True)
 
 # load color
 color_path = input_path / "images"
-color_paths = sorted(glob.glob(os.path.join(color_path, "*.png")), key=lambda x: int(os.path.basename(x)[:-4]))
+color_paths = sorted(
+    glob.glob(os.path.join(color_path, "*.png")),
+    key=lambda x: int(os.path.basename(x)[:-4]),
+)
 
 # load depth
-depth_path = input_path /  ("depth_complete_train")
-depth_paths = sorted(glob.glob(os.path.join(depth_path, "*.png")), key=lambda x: int(os.path.basename(x)[:-4]))
+depth_path = input_path / ("depth_complete_train")
+depth_paths = sorted(
+    glob.glob(os.path.join(depth_path, "*.png")),
+    key=lambda x: int(os.path.basename(x)[:-4]),
+)
 
 
 # load intrinsic
@@ -63,7 +74,10 @@ camera_intrinsic = np.loadtxt(intrinsic_path)
 # load pose
 pose_path = input_path / "pose"
 poses = []
-pose_paths = sorted(glob.glob(os.path.join(pose_path, "*.txt")), key=lambda x: int(os.path.basename(x)[:-4]))
+pose_paths = sorted(
+    glob.glob(os.path.join(pose_path, "*.txt")),
+    key=lambda x: int(os.path.basename(x)[:-4]),
+)
 for pose_path in pose_paths:
     c2w = np.loadtxt(pose_path)
     poses.append(c2w)
@@ -110,8 +124,9 @@ K = camera_intrinsic
 
 frames = []
 out_index = 0
-for idx, (pose, image_path, depth_path) in enumerate(zip(poses, color_paths, depth_paths)):
-
+for idx, (pose, image_path, depth_path) in enumerate(
+    zip(poses, color_paths, depth_paths)
+):
     target_image = output_path / f"{out_index:06d}_rgb.png"
     print(target_image)
     img = Image.open(image_path)

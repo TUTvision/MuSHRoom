@@ -1,5 +1,9 @@
-from . import _C
+"""
+borrowed from RadianceMapping https://github.com/seanywang0408/RadianceMapping/blob/main/rasterizer/rasterizer.py#L13
+"""
 import torch
+
+from . import _C
 
 
 def get_bin_size(img_size):
@@ -10,10 +14,11 @@ def get_bin_size(img_size):
     else:
         return 64
 
+
 def rasterize(xyz_ndc, hw, radius):
     """
     This function implements rasterization.
-    Args: 
+    Args:
         xyz_ndc: ndc coordinates of point cloud
         hw: height and width of rasterization
         radius: radius of points
@@ -29,9 +34,15 @@ def rasterize(xyz_ndc, hw, radius):
     num_points_per_cloud = torch.tensor([N], device=xyz_ndc.device)
     radius = radius * torch.ones([N], device=xyz_ndc.device)
 
-    
-    idx, zbuf, _ = _C._rasterize(xyz_ndc, cloud_to_packed_first_idx, \
-                                 num_points_per_cloud, hw, radius, \
-                                    points_per_pixel, bin_size, N)
-    
+    idx, zbuf, _ = _C._rasterize(
+        xyz_ndc,
+        cloud_to_packed_first_idx,
+        num_points_per_cloud,
+        hw,
+        radius,
+        points_per_pixel,
+        bin_size,
+        N,
+    )
+
     return idx, zbuf

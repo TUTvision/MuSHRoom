@@ -1,15 +1,14 @@
+"""
+adapted from sdfstudio: https://github.com/autonomousvision/sdfstudio/blob/master/scripts/datasets/process_nerfstudio_to_sdfstudio.py
+"""
 import argparse
 import json
 import os
 from pathlib import Path
-import cv2
-import matplotlib.pyplot as plt
+
 import numpy as np
-import PIL
-from PIL import Image
-from torchvision import transforms
 from tqdm import tqdm
-import math
+
 
 def main(args):
     """
@@ -21,22 +20,16 @@ def main(args):
     long_input_dir = input_dir / "long_capture" / "sdf_dataset_all"
     short_input_dir = input_dir / "short_capture"
 
-
     """ load long sequence pose """
     long_cam_params = json.load(open(long_input_dir / "meta_data.json"))
     # === load camera intrinsics and poses ===
     scene_center = np.array(long_cam_params["scene_center"])
     scene_scale = long_cam_params["scene_scale"]
 
-
-
-
-
-
     """ load short sequence pose """
     short_cam_params = json.load(open(short_input_dir / "transformations_colmap.json"))
-    # short_to_long_tfm = np.array(json.load(open(os.path.join(args.input_dir, "short_to_long_transformation_icp.json")))["gt_transformation"]).reshape(4, 4) 
-    
+    # short_to_long_tfm = np.array(json.load(open(os.path.join(args.input_dir, "short_to_long_transformation_icp.json")))["gt_transformation"]).reshape(4, 4)
+
     short_cam_intrinsics = []
 
     # === load camera intrinsics and poses ===
@@ -48,7 +41,13 @@ def main(args):
         # load intrinsics from polycam
         if "fl_x" in frame:
             short_cam_intrinsics.append(
-                np.array([[frame["fl_x"], 0, frame["cx"]], [0, frame["fl_y"], frame["cy"]], [0, 0, 1]])
+                np.array(
+                    [
+                        [frame["fl_x"], 0, frame["cx"]],
+                        [0, frame["fl_y"], frame["cy"]],
+                        [0, 0, 1],
+                    ]
+                )
             )
         name = frame["file_path"]
         if os.path.exists(os.path.join(short_input_dir, name[2:])) == False:
@@ -61,13 +60,11 @@ def main(args):
 
         # load images
         file_path = Path(frame["file_path"])
-        img_path =  "images/" + file_path.name
+        img_path = "images/" + file_path.name
         # assert img_path.exists()
         short_image_paths.append(img_path)
-    
+
     short_poses = np.array(short_poses)
-
-
 
     # === Normalize the scene ===
     if args.scene_type in ["indoor", "object"]:
@@ -75,7 +72,7 @@ def main(args):
         # TODO: Adaptively estimate `scene_scale_mult` based on depth-map or point-cloud prior
         if not args.scene_scale_mult:
             args.scene_scale_mult = 1.05 if args.scene_type == "object" else 5.0
-        
+
         short_poses[:, :3, 3] -= scene_center
         short_poses[:, :3, 3] *= scene_scale
         # calculate scale matrix
@@ -83,8 +80,6 @@ def main(args):
         scale_mat[:3, 3] -= scene_center
         scale_mat[:3] *= scene_scale
         scale_mat = np.linalg.inv(scale_mat)
-
-
 
     # === Construct the scene box ===
     if args.scene_type == "indoor":
@@ -114,19 +109,15 @@ def main(args):
             "collider_type": "box",
         }
 
-
     # === Construct the frames in the meta_data.json ===
     frames = []
     out_index = 0
-    for idx, ( pose, image_path) in enumerate(tqdm(zip( short_poses, short_image_paths))):
-
-
+    for idx, (pose, image_path) in enumerate(tqdm(zip(short_poses, short_image_paths))):
         frame = {
             "rgb_path": image_path,
             "camtoworld": pose.tolist(),
             "intrinsics": short_cam_intrinsics[idx].tolist(),
         }
-
 
         frames.append(frame)
         out_index += 1
@@ -148,15 +139,15 @@ def main(args):
         json.dump(meta_data, f, indent=4)
 
 
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="preprocess nerfstudio dataset to sdfstudio dataset, " "currently support colmap and polycam"
+        description="preprocess nerfstudio dataset to sdfstudio dataset, "
+        "currently support colmap and polycam"
     )
 
-    parser.add_argument("--input_dir", required=True, help="path to nerfstudio data directory")
-
+    parser.add_argument(
+        "--input_dir", required=True, help="path to nerfstudio data directory"
+    )
 
     parser.add_argument(
         "--scene-type",
@@ -173,8 +164,6 @@ if __name__ == "__main__":
         help="The bounding box of the scene is firstly calculated by the camera positions, "
         "then mutiply with scene_scale_mult",
     )
-
-
 
     args = parser.parse_args()
 

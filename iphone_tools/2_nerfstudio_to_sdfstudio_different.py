@@ -1,7 +1,11 @@
+"""
+adapted from sdfstudio: https://github.com/autonomousvision/sdfstudio/blob/master/scripts/datasets/process_nerfstudio_to_sdfstudio.py
+"""
 import argparse
 import json
 import os
 from pathlib import Path
+
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,7 +13,7 @@ import PIL
 from PIL import Image
 from torchvision import transforms
 from tqdm import tqdm
-import math
+
 
 def main(args):
     """
@@ -25,7 +29,13 @@ def main(args):
     cam_intrinsics = []
     if args.data_type == "colmap":
         cam_intrinsics.append(
-            np.array([[cam_params["fl_x"], 0, cam_params["cx"]], [0, cam_params["fl_y"], cam_params["cy"]], [0, 0, 1]])
+            np.array(
+                [
+                    [cam_params["fl_x"], 0, cam_params["cx"]],
+                    [0, cam_params["fl_y"], cam_params["cy"]],
+                    [0, 0, 1],
+                ]
+            )
         )
 
     frames = cam_params["frames"]
@@ -38,7 +48,13 @@ def main(args):
         # load intrinsics from polycam
         if args.data_type == "polycam":
             cam_intrinsics.append(
-                np.array([[frame["fl_x"], 0, frame["cx"]], [0, frame["fl_y"], frame["cy"]], [0, 0, 1]])
+                np.array(
+                    [
+                        [frame["fl_x"], 0, frame["cx"]],
+                        [0, frame["fl_y"], frame["cy"]],
+                        [0, 0, 1],
+                    ]
+                )
             )
 
         # load poses
@@ -72,11 +88,10 @@ def main(args):
 
     index = i_all
 
-
     poses = np.array(poses)
 
     min_vertices = poses[index][:, :3, 3].min(axis=0)
-    max_vertices = poses[index][:, :3, 3] .max(axis=0)
+    max_vertices = poses[index][:, :3, 3].max(axis=0)
 
     # === Normalize the scene ===
     if args.scene_type in ["indoor", "object"]:
@@ -84,7 +99,9 @@ def main(args):
         # TODO: Adaptively estimate `scene_scale_mult` based on depth-map or point-cloud prior
         if not args.scene_scale_mult:
             args.scene_scale_mult = 1.05 if args.scene_type == "object" else 5.0
-        scene_scale = 2.0 / (np.max(max_vertices - min_vertices) * args.scene_scale_mult)
+        scene_scale = 2.0 / (
+            np.max(max_vertices - min_vertices) * args.scene_scale_mult
+        )
         scene_center = (min_vertices + max_vertices) / 2.0
         # normalize pose to unit cube
         poses[:, :3, 3] -= scene_center
@@ -135,7 +152,10 @@ def main(args):
         target_crop = min(h, w)
         tar_h = tar_w = 384 * args.crop_mult
         rgb_trans = transforms.Compose(
-            [transforms.CenterCrop(target_crop), transforms.Resize((tar_h, tar_w), interpolation=PIL.Image.BILINEAR)]
+            [
+                transforms.CenterCrop(target_crop),
+                transforms.Resize((tar_h, tar_w), interpolation=PIL.Image.BILINEAR),
+            ]
         )
         depth_trans = transforms.Compose(
             [
@@ -165,8 +185,7 @@ def main(args):
     # === Construct the frames in the meta_data.json ===
     frames = []
     out_index = 0
-    for idx, ( pose, image_path) in enumerate(tqdm(zip( poses, image_paths))):
-
+    for idx, (pose, image_path) in enumerate(tqdm(zip(poses, image_paths))):
         # save rgb image
         out_img_path = output_dir / f"{out_index:06d}_rgb.png"
         img = Image.open(image_path)
@@ -177,7 +196,9 @@ def main(args):
         frame = {
             "rgb_path": rgb_path,
             "camtoworld": pose.tolist(),
-            "intrinsics": cam_intrinsics[0].tolist() if args.data_type == "colmap" else cam_intrinsics[idx].tolist(),
+            "intrinsics": cam_intrinsics[0].tolist()
+            if args.data_type == "colmap"
+            else cam_intrinsics[idx].tolist(),
         }
 
         if args.sensor_depth:
@@ -193,7 +214,9 @@ def main(args):
             plt.imsave(out_depth_path, new_depth, cmap="viridis")
             np.save(str(out_depth_path).replace(".png", ".npy"), new_depth)
 
-            frame["sensor_depth_path"] = rgb_path.replace("_rgb.png", "_sensor_depth.npy")
+            frame["sensor_depth_path"] = rgb_path.replace(
+                "_rgb.png", "_sensor_depth.npy"
+            )
 
         if args.mono_prior:
             frame["mono_depth_path"] = rgb_path.replace("_rgb.png", "_depth.npy")
@@ -247,16 +270,29 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="preprocess nerfstudio dataset to sdfstudio dataset, " "currently support colmap and polycam"
+        description="preprocess nerfstudio dataset to sdfstudio dataset, "
+        "currently support colmap and polycam"
     )
 
-    parser.add_argument("--data", dest="input_dir", required=True, help="path to nerfstudio data directory")
-    parser.add_argument("--output-dir", dest="output_dir", required=True, help="path to ouput data directory")
-    parser.add_argument("--data-type", dest="data_type", required=True, choices=["colmap", "polycam"])
     parser.add_argument(
-    "--pose_scale", help="use training data or all data to rescale pose",
+        "--data",
+        dest="input_dir",
+        required=True,
+        help="path to nerfstudio data directory",
     )
-
+    parser.add_argument(
+        "--output-dir",
+        dest="output_dir",
+        required=True,
+        help="path to ouput data directory",
+    )
+    parser.add_argument(
+        "--data-type", dest="data_type", required=True, choices=["colmap", "polycam"]
+    )
+    parser.add_argument(
+        "--pose_scale",
+        help="use training data or all data to rescale pose",
+    )
 
     parser.add_argument(
         "--scene-type",
@@ -275,13 +311,17 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--sensor-depth", dest="sensor_depth", action="store_true", help="Generate sensor depths from polycam."
+        "--sensor-depth",
+        dest="sensor_depth",
+        action="store_true",
+        help="Generate sensor depths from polycam.",
     )
     parser.add_argument(
         "--mono-prior",
         dest="mono_prior",
         action="store_true",
-        help="Whether to generate mono-prior depths and normals. " "If enabled, the images will be cropped to 384*384",
+        help="Whether to generate mono-prior depths and normals. "
+        "If enabled, the images will be cropped to 384*384",
     )
     parser.add_argument(
         "--crop-mult",

@@ -1,47 +1,49 @@
+"""
+adapted from sdfstudio: https://github.com/autonomousvision/sdfstudio/blob/master/scripts/datasets/process_nerfstudio_to_sdfstudio.py
+"""
 import argparse
-import glob
 import json
 import os
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
-import PIL
 
-from torchvision import transforms
-
-parser = argparse.ArgumentParser(description="preprocess scannet dataset to sdfstudio dataset")
+parser = argparse.ArgumentParser(
+    description="preprocess scannet dataset to sdfstudio dataset"
+)
 
 parser.add_argument("--input_path", dest="input_path", help="path to scannet scene")
 parser.set_defaults(im_name="NONE")
 
 args = parser.parse_args()
 
-long_input_path = os.path.join(args.input_path, "long_capture", "sdf_dataset_all", "meta_data.json")
+long_input_path = os.path.join(
+    args.input_path, "long_capture", "sdf_dataset_all", "meta_data.json"
+)
 short_input_path = os.path.join(args.input_path, "short_capture")
 
-short_input_path = Path(short_input_path) 
+short_input_path = Path(short_input_path)
 
-json_file = json.load(open(short_input_path/ "transformations_colmap.json"))
-
-
+json_file = json.load(open(short_input_path / "transformations_colmap.json"))
 
 
 color_paths = []
 poses = []
 
-TRANSFORM_CAM = np.array([
-    [1,0,0,0],
-    [0,-1,0,0],
-    [0,0,-1,0],
-    [0,0,0,1],
-    ])
+TRANSFORM_CAM = np.array(
+    [
+        [1, 0, 0, 0],
+        [0, -1, 0, 0],
+        [0, 0, -1, 0],
+        [0, 0, 0, 1],
+    ]
+)
 
 for frame in json_file["frames"]:
     color_paths.append(frame["file_path"])
     c2w = np.array(frame["transform_matrix"])
     c2w = np.matmul(c2w, TRANSFORM_CAM)
-    
+
     poses.append(c2w)
 
 
@@ -56,7 +58,7 @@ K = np.array([[fx, 0, cx, 0], [0, fy, cy, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
 long_transformation = json.load(open(long_input_path))
 center = long_transformation["center"]
 scale = long_transformation["scale"]
-  
+
 poses[:, :3, 3] -= center
 poses[:, :3, 3] *= scale
 
@@ -64,11 +66,9 @@ out_index = 0
 frames = []
 
 
-
 for i, image_path in enumerate(color_paths):
-    
     image_name = os.path.basename(image_path)
-    
+
     pose = poses[i]
 
     frame = {
@@ -107,7 +107,3 @@ output_data["frames"] = frames
 # save as json
 with open(short_input_path / "meta_data_align.json", "w", encoding="utf-8") as f:
     json.dump(output_data, f, indent=4)
-
-
-
-
