@@ -1,0 +1,84 @@
+
+## List of scripts for processing the data sets
+
+This page contains the first version data preprocess steps.
+
+Enviroment installation.
+Install SpectacularAI by 
+```
+pip install spectacularai
+```
+Install radiance mapping by instruction in [RadianceMapping](https://github.com/seanywang0408/RadianceMapping).
+Install [Nerfstudio](https://github.com/nerfstudio-project/nerfstudio).
+
+### kinect_tools
+
+After capturing videos with Kinect, we first extract raw images, depth, pose, and point cloud of each keyframe.
+```
+python kinect_tools/1_process_rawvideo_perframe.py --input room_datasets/${room_name}/kinect/long_capture --output room_datasets/${room_name}/kinect/long_capture
+```
+
+Saving pose of each keyframe in the "pose" folder to a json file.
+```
+python kinect_tools/2_generate_train_transformations.py --input room_datasets/${room_name}/kinect/long_capture
+```
+
+We fuse the point cloud of each keyframe of the whole sequences or of the training frames.
+```
+python kinect_tools/3_fuse_point_cloud_train.py --input room_datasets/${room_name}/kinect/long_capture --pose_scale all/train
+```
+
+We render z-buffer depth from point clouds constructed with all frames or training frames.
+```
+python kinect_tools/4_generate_zbuf_depth.py —datadir room_datasets/${room_name}/kinect/long_capture —pose_scale all/train
+```
+
+We complete raw depth with z-buffer depth. Depth completed from “pointcloud_train.ply” will be used for testing within a single sequence, depth completed from “pointcloud_all.ply” will be used for testing with a different sequence.
+```
+python kinect_tools/5_complete_depth.py —datadir room_datasets/${room_name}/kinect/long_capture —pose_scale all/train
+```
+
+Data used for testing [NeuS-facto](https://github.com/autonomousvision/sdfstudio) with testing within a single sequence protocol can be generated from
+```
+python kinect_tools/6_generate_sdf_within.py —input_path room_datasets/${room_name}/kinect/long_capture —output_path room_datasets/${room_name}/kinect/long_capture/sdf_dataset_train —type sensor_depth
+```
+
+Data used for testing NeuS-facto with testing with a different sequence protocol can be generated from
+```
+python kinect_tools/8_generate_sdf_different.py —input_path room_datasets/${room_name}/kinect/long_capture —output_path room_datasets/${room_name}/kinect/long_capture/sdf_dataset_all —type sensor_depth 
+```
+
+The aligned poses for short capture can be generated from:
+```
+python kinect_tools/9_generate_sdf_short_different.py —input_path room_datasets/${room_name}/kinect/
+```
+
+
+Since poses used for testing with a different sequence protocol are optimized by COLMAP, the whole point cloud can be transferred to new coordination by:
+```
+python kinect_tools/3_fuse_point_cloud_all.py —input room_datasets/${room_name}/kinect/long_capture 
+```
+
+### iphone_tools
+
+Data used for testing NeuS-facto with testing within a single sequence protocol can be generated from
+```
+python iphone_tools/1_nerfstudio_to_sdfstudio_within.py —data room_datasets/${room_name}/iphone/long_capture —output-dir room_datasets/${room_name}/iphone/long_capture/sdf_dataset_train —data-type polycam —scene-type indoor —sensor-depth 
+```
+
+Data used for testing NeuS-facto with testing with a different sequence protocol can be generated from
+```
+python iphone_tools/2_nerfstudio_to_sdfstudio_different.py —data room_datasets/${room_name}/iphone/long_capture —output-dir room_datasets/${room_name}/iphone/long_capture/sdf_dataset_all —data-type colmap —scene-type indoor —sensor-depth 
+```
+(The “koivu” and “activity” rooms are exception. The —data-type needs to be set to “polycam”)
+
+The aligned poses for short capture can be generated from:
+```
+python iphone_tools/3_nerfstudio_to_sdfstudio_short_different.py —input_dir room_datasets/${room_name}/iphone/ —scene-type indoor 
+```
+
+
+
+
+
+

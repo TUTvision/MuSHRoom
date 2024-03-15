@@ -9,6 +9,7 @@ Metaverse technologies demand accurate, real-time, and immersive modeling on con
 To address this gap and promote the development of robust and immersive modeling and rendering with consumer-grade devices, first, we propose a real-world Multi-Sensor Hybrid Room Dataset (MuSHRoom). Our dataset presents exciting challenges and requires state-of-the-art methods to be cost-effective, robust to noisy data and devices, and can jointly learn 3D reconstruction and novel view synthesis, instead of treating them as separate tasks, making them ideal for real-world applications. Second, we benchmark several famous pipelines on our dataset for joint 3D mesh reconstruction and novel view synthesis. Finally, in order to further improve the overall performance, we propose a new method that achieves a good trade-off between the two tasks. Our dataset and benchmark show great potential in promoting the improvements for fusing 3D reconstruction and high-quality rendering in a robust and computationally efficient end-to-end fashion. The dataset will be made publicly available.
 
 ## Updates
+* [x] 📣  Updates results with only COLMAP pose [2024-03-14]
 * [x] 📣  Dataset process scripts have been released [2023-11-19]
 * [x] 📣  Release Kinect and iPhone Dataset. [2023-11-28]
 * [x] 📣  Release mesh evaluation script [2023-11-26]
@@ -58,13 +59,11 @@ To maximize compatibility, all data is published in open and simple file formats
 		— intrinsic/ # intrinsic parameters
 		— PointCloud/ # spectacularAI point cloud of keyframe
 		— pose/	# spectacularAI pose of keyframe. These poses are aligned with the metric of depth. Poses are in the OPENCV coordination.
-		— sdf_dataset_all_interp_3/ # sdfstudio format dataset used for our method
-		— sdf_dataset_train_interp_3/ # sdfstudio format dataset used for our method
 		— calibration.json; data.jsonl; data.mkv; data2.mkv; vio_config.yaml	# raw videos and parameters from spectacularAI SDK
 		— camera_parameters.txt	# camera settings during capture
 		— test.txt # image id for testing within a single sequence
 		— transformations_colmap.json # global optimized colmap used for testing with a different sequence
-		— transformations.json	# pose saved in the json file. Poses are in the OPENGL coordination.
+		— transformations.json	# spectacularAI pose saved in the json file. Poses are in the OPENGL coordination.
 	| —— short_capture
 		— images/ # same with long capture
 		— depth/	# same with long capture
@@ -84,12 +83,12 @@ To maximize compatibility, all data is published in open and simple file formats
 		— sdf_dataset_train_interp_4	# same with Kinect
 		— test.txt	# same with Kinect
 		— transformations_colmap.json	# same with Kinect
-		— transformations.json	# same with Kinect
+		— transformations.json	# polycam pose
 	| —— short_capture
 		— images/	# same with Kinect
 		— depth/	# same with Kinect
-		— transformations_colmap.json	# same with Kinect
-		— transformations.json	# same with Kinect
+		— transformations_colmap.json	# same with long capture
+		— transformations.json	# same with long capture
 —— gt_mesh.ply	# reference mesh used for geometry comparison
 —— gt_pd.ply	# reference point cloud used for geometry comparison
 —— icp_iphone.json	# aligned transformation matrix used for iPhone sequences
@@ -112,84 +111,166 @@ To maximize compatibility, all data is published in open and simple file formats
 | olohuone      | 19 $\times$ 6.4 $\times$ 3    | Auto             |3600                                                          | Auto        | Auto
 
 
-## List of scripts for processing the data sets
+## Novel view synthesis and mesh reconstruction results
 
-Enviroment installation.
-Install SpectacularAI by 
-```
-pip install spectacularai
-```
-Install radiance mapping by instruction in [RadianceMapping](https://github.com/seanywang0408/RadianceMapping).
-Install [Nerfstudio](https://github.com/nerfstudio-project/nerfstudio).
-
-### kinect_tools
-
-After capturing videos with Kinect, we first extract raw images, depth, pose, and point cloud of each keyframe.
-```
-python kinect_tools/1_process_rawvideo_perframe.py --input room_datasets/${room_name}/kinect/long_capture --output room_datasets/${room_name}/kinect/long_capture
-```
-
-Saving pose of each keyframe in the "pose" folder to a json file.
-```
-python kinect_tools/2_generate_train_transformations.py --input room_datasets/${room_name}/kinect/long_capture
-```
-
-We fuse the point cloud of each keyframe of the whole sequences or of the training frames.
-```
-python kinect_tools/3_fuse_point_cloud_train.py --input room_datasets/${room_name}/kinect/long_capture --pose_scale all/train
-```
-
-We render z-buffer depth from point clouds constructed with all frames or training frames.
-```
-python kinect_tools/4_generate_zbuf_depth.py —datadir room_datasets/${room_name}/kinect/long_capture —pose_scale all/train
-```
-
-We complete raw depth with z-buffer depth. Depth completed from “pointcloud_train.ply” will be used for testing within a single sequence, depth completed from “pointcloud_all.ply” will be used for testing with a different sequence.
-```
-python kinect_tools/5_complete_depth.py —datadir room_datasets/${room_name}/kinect/long_capture —pose_scale all/train
-```
-
-Data used for testing [NeuS-facto](https://github.com/autonomousvision/sdfstudio) with testing within a single sequence protocol can be generated from
-```
-python kinect_tools/6_generate_sdf_within.py —input_path room_datasets/${room_name}/kinect/long_capture —output_path room_datasets/${room_name}/kinect/long_capture/sdf_dataset_train —type sensor_depth
-```
-
-Data used for testing NeuS-facto with testing with a different sequence protocol can be generated from
-```
-python kinect_tools/8_generate_sdf_different.py —input_path room_datasets/${room_name}/kinect/long_capture —output_path room_datasets/${room_name}/kinect/long_capture/sdf_dataset_all —type sensor_depth 
-```
-
-The aligned poses for short capture can be generated from:
-```
-python kinect_tools/9_generate_sdf_short_different.py —input_path room_datasets/${room_name}/kinect/
-```
+We update Nerfacto/Depth-Nerfacto/Neusfacto/Splatfacto trained only with COLMAP pose there. We trained once time to evaluate both the two evaluation protocols there to improve efficiency, instead of training two times which was used in the previous paper before. The test ID used for evaluating the "test within a single sequence" is stored in "test.txt" in each "long_capture" folder, the remaining ID in the long sequence is used for training. We use the same model to evaluate the images in the short sequence. Mesh extracted from this model is used for evaluating the mesh reconstruction ability. Please follow this training and comparsion method reported here for efficiency.
 
 
-Since poses used for testing with a different sequence protocol are optimized by COLMAP, the whole point cloud can be transferred to new coordination by:
-```
-python kinect_tools/3_fuse_point_cloud_all.py —input room_datasets/${room_name}/kinect/long_capture 
-```
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+.math-mode {
+    font-style: normal;
+    font-family: 'Computer Modern', 'Latin Modern Math', 'Arial', sans-serif;
+}
 
-### iphone_tools
-
-Data used for testing NeuS-facto with testing within a single sequence protocol can be generated from
-```
-python iphone_tools/1_nerfstudio_to_sdfstudio_within.py —data room_datasets/${room_name}/iphone/long_capture —output-dir room_datasets/${room_name}/iphone/long_capture/sdf_dataset_train —data-type polycam —scene-type indoor —sensor-depth 
-```
-
-Data used for testing NeuS-facto with testing with a different sequence protocol can be generated from
-```
-python iphone_tools/2_nerfstudio_to_sdfstudio_different.py —data room_datasets/${room_name}/iphone/long_capture —output-dir room_datasets/${room_name}/iphone/long_capture/sdf_dataset_all —data-type colmap —scene-type indoor —sensor-depth 
-```
-(The “koivu” and “activity” rooms are exception. The —data-type needs to be set to “polycam”)
-
-The aligned poses for short capture can be generated from:
-```
-python iphone_tools/3_nerfstudio_to_sdfstudio_short_different.py —input_dir room_datasets/${room_name}/iphone/ —scene-type indoor 
-```
-
-
-
-
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-c3ow" rowspan="3">Device</th>
+    <th class="tg-c3ow" rowspan="3">Methods</th>
+    <th class="tg-c3ow" colspan="5" rowspan="2">Reconstruction quality</th>
+    <th class="tg-c3ow" colspan="6">Rendering quality</th>
+  </tr>
+  <tr>
+    <th class="tg-c3ow" colspan="3">Test within a single sequence</th>
+    <th class="tg-c3ow" colspan="3">Test with a different sequence</th>
+  </tr>
+  <tr>
+    <th class="tg-c3ow"><span class="latex">Acc ↓</span></th>
+    <th class="tg-c3ow">Comp ↓</th>
+    <th class="tg-c3ow">C-l1 ↓</th>
+    <th class="tg-c3ow">NC ↑</th>
+    <th class="tg-c3ow">F-score ↑</th>
+    <th class="tg-c3ow">PSNR ↑</th>
+    <th class="tg-c3ow">SSIM ↑</th>
+    <th class="tg-c3ow">LPIPS ↓</th>
+    <th class="tg-c3ow">PSNR ↑</th>
+    <th class="tg-c3ow">SSIM$ ↑</th>
+    <th class="tg-c3ow">LPIPS ↓</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-c3ow" rowspan="4">iPhone</td>
+    <td class="tg-c3ow"><a href="https://github.com/nerfstudio-project/nerfstudio">Nerfacto</a></td>
+    <td class="tg-c3ow">0.0652</td>
+    <td class="tg-c3ow">0.0603</td>
+    <td class="tg-c3ow">0.0628</td>
+    <td class="tg-c3ow">0.7491</td>
+    <td class="tg-c3ow">0.6390</td>
+    <td class="tg-c3ow">20.83</td>
+    <td class="tg-c3ow">0.7653</td>
+    <td class="tg-c3ow">0.2506</td>
+    <td class="tg-c3ow">20.36</td>
+    <td class="tg-c3ow">0.7448</td>
+    <td class="tg-c3ow">0.2781</td>
+  </tr>
+  <tr>
+    <td class="tg-c3ow"><a href="https://github.com/nerfstudio-project/nerfstudio">Depth-Nerfacto</a></td>
+    <td class="tg-c3ow">0.0653</td>
+    <td class="tg-c3ow">0.0614</td>
+    <td class="tg-c3ow">0.0634</td>
+    <td class="tg-c3ow">0.7354</td>
+    <td class="tg-c3ow">0.6126</td>
+    <td class="tg-c3ow">21.23</td>
+    <td class="tg-c3ow">0.7623</td>
+    <td class="tg-c3ow">0.2612</td>
+    <td class="tg-c3ow">20.67</td>
+    <td class="tg-c3ow">0.7423</td>
+    <td class="tg-c3ow">0.2873</td>
+  </tr>
+  <tr>
+    <td class="tg-c3ow"><a href="https://github.com/autonomousvision/sdfstudio">MonoSDF</a></td>
+    <td class="tg-c3ow">0.0792</td>
+    <td class="tg-c3ow">0.0237</td>
+    <td class="tg-c3ow">0.0514</td>
+    <td class="tg-c3ow">0.8200</td>
+    <td class="tg-c3ow">0.7596</td>
+    <td class="tg-c3ow">19.79</td>
+    <td class="tg-c3ow">0.6972</td>
+    <td class="tg-c3ow">0.4122</td>
+    <td class="tg-c3ow">17.92</td>
+    <td class="tg-c3ow">0.6683</td>
+    <td class="tg-c3ow">0.4384</td>
+  </tr>
+  <tr>
+    <td class="tg-c3ow"><a href="https://docs.nerf.studio/nerfology/methods/splat.html">Splatfacto</a></td>
+    <td class="tg-c3ow">0.1074</td>
+    <td class="tg-c3ow">0.0708</td>
+    <td class="tg-c3ow">0.0881</td>
+    <td class="tg-c3ow">0.7602</td>
+    <td class="tg-c3ow">0.4405</td>
+    <td class="tg-c3ow">24.22</td>
+    <td class="tg-c3ow">0.8375</td>
+    <td class="tg-c3ow">0.1421</td>
+    <td class="tg-c3ow">21.39</td>
+    <td class="tg-c3ow">0.7738</td>
+    <td class="tg-c3ow">0.1986</td>
+  </tr>
+  <tr>
+    <td class="tg-c3ow" rowspan="4">Kinect</td>
+    <td class="tg-c3ow"><a href="https://github.com/nerfstudio-project/nerfstudio">Nerfacto</a></td>
+    <td class="tg-c3ow">0.0669</td>
+    <td class="tg-c3ow">0.0695</td>
+    <td class="tg-c3ow">0.0682</td>
+    <td class="tg-c3ow">0.7458</td>
+    <td class="tg-c3ow">0.6252</td>
+    <td class="tg-c3ow">23.89</td>
+    <td class="tg-c3ow">0.8375</td>
+    <td class="tg-c3ow">0.2048</td>
+    <td class="tg-c3ow">22.43</td>
+    <td class="tg-c3ow">0.8331</td>
+    <td class="tg-c3ow">0.2010</td>
+  </tr>
+  <tr>
+    <td class="tg-c3ow"><a href="https://github.com/nerfstudio-project/nerfstudio">Depth-Nerfacto</a></td>
+    <td class="tg-c3ow">0.0710</td>
+    <td class="tg-c3ow">0.0691</td>
+    <td class="tg-c3ow">0.0701</td>
+    <td class="tg-c3ow">0.7274</td>
+    <td class="tg-c3ow">0.5905</td>
+    <td class="tg-c3ow">24.21</td>
+    <td class="tg-c3ow">0.8370</td>
+    <td class="tg-c3ow">0.2107</td>
+    <td class="tg-c3ow">22.77</td>
+    <td class="tg-c3ow">0.8345</td>
+    <td class="tg-c3ow">0.2036</td>
+  </tr>
+  <tr>
+    <td class="tg-c3ow"><a href="https://github.com/autonomousvision/sdfstudio">MonoSDF</a></td>
+    <td class="tg-c3ow">0.0439</td>
+    <td class="tg-c3ow">0.0204</td>
+    <td class="tg-c3ow">0.0321</td>
+    <td class="tg-c3ow">0.8616</td>
+    <td class="tg-c3ow">0.8753</td>
+    <td class="tg-c3ow">23.05</td>
+    <td class="tg-c3ow">0.8315</td>
+    <td class="tg-c3ow">0.2434</td>
+    <td class="tg-c3ow">21.60</td>
+    <td class="tg-c3ow">0.8267</td>
+    <td class="tg-c3ow">0.2219</td>
+  </tr>
+  <tr>
+    <td class="tg-c3ow"><a href="https://docs.nerf.studio/nerfology/methods/splat.html">Splatfacto</a></td>
+    <td class="tg-c3ow">0.1007</td>
+    <td class="tg-c3ow">0.0704</td>
+    <td class="tg-c3ow">0.0855</td>
+    <td class="tg-c3ow">0.7689</td>
+    <td class="tg-c3ow">0.4697</td>
+    <td class="tg-c3ow">26.07</td>
+    <td class="tg-c3ow">0.8844</td>
+    <td class="tg-c3ow">0.1378</td>
+    <td class="tg-c3ow">23.28</td>
+    <td class="tg-c3ow">0.8604</td>
+    <td class="tg-c3ow">0.1579</td>
+  </tr>
+</tbody>
+</table>
 
 
