@@ -114,17 +114,6 @@ To maximize compatibility, all data is published in open and simple file formats
 We update Nerfacto/Depth-Nerfacto/Neusfacto/Splatfacto trained only with COLMAP pose there. We trained once time to evaluate both the two evaluation protocols there to improve efficiency, instead of training two times which was used in the previous paper before. The test ID used for evaluating the "test within a single sequence" is stored in "test.txt" in each "long_capture" folder, the remaining ID in the long sequence is used for training. We use the same model to evaluate the images in the short sequence. Mesh extracted from this model is used for evaluating the mesh reconstruction ability. Please follow this training and comparsion method reported here for efficiency.
 
 
-<style type="text/css">
-.tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
-.math-mode {
-    font-style: normal;
-    font-family: 'Computer Modern', 'Latin Modern Math', 'Arial', sans-serif;
-}
 
 </style>
 <table class="tg">
@@ -149,7 +138,7 @@ We update Nerfacto/Depth-Nerfacto/Neusfacto/Splatfacto trained only with COLMAP 
     <th class="tg-c3ow">SSIM ↑</th>
     <th class="tg-c3ow">LPIPS ↓</th>
     <th class="tg-c3ow">PSNR ↑</th>
-    <th class="tg-c3ow">SSIM$ ↑</th>
+    <th class="tg-c3ow">SSIM ↑</th>
     <th class="tg-c3ow">LPIPS ↓</th>
   </tr>
 </thead>
