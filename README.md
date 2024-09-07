@@ -113,6 +113,7 @@ To maximize compatibility, all data is published in open and simple file formats
 
 We update Nerfacto/Depth-Nerfacto/Neusfacto/Splatfacto trained only with COLMAP pose there. We trained once time to evaluate both the two evaluation protocols there to improve efficiency, instead of training two times which was used in the previous paper before. The test ID used for evaluating the "test within a single sequence" is stored in "test.txt" in each "long_capture" folder, the remaining ID in the long sequence is used for training. We use the same model to evaluate the images in the short sequence. Mesh extracted from this model is used for evaluating the mesh reconstruction ability. Please follow this training and comparsion method reported here for efficiency.
 
+To use the MuSHRoom dataset with nerfstudio framework, please use the dataparser here: [dn_splatter/data/mushroom_dataparser.py](https://github.com/maturk/dn-splatter/blob/main/dn_splatter/data/mushroom_dataparser.py). The instructions are in https://github.com/maturk/dn-splatter#mushroom.
 
 
 </style>
