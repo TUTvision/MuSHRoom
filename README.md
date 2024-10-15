@@ -33,6 +33,7 @@ If you use this data, please cite the original paper presenting it:
 ## Downloading the data
 The data files are available for download on [Zenodo](https://zenodo.org/communities/mushroom?q=&l=list&p=1&s=10&sort=newest) and can be downloaded on a per dataset basis from there. 
 
+✨✨To use this dataset with nerfstudio framework, please follow the instruction in [DN-Splatter](https://github.com/maturk/dn-splatter?tab=readme-ov-file#supported-dataparsers).
 
 <!-- iPhone data that contains the "images", "depth", "poses" can be downloaded from:
 [Part1](https://zenodo.org/records/10154395),
